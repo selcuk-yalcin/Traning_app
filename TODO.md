@@ -1,5 +1,6 @@
 # Traning_app — Comprehensive TODO
 
+Authoritative requirements: **`SPEC.md`**.  
 Multi-model, agentic education presentation engine. Admin UI lives in [admin_pan](https://github.com/selcuk-yalcin/admin_pan); this list covers **engine + integration + export** only.
 
 ---
