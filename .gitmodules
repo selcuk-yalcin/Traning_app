@@ -1,0 +1,3 @@
+[submodule "admin_pan"]
+	path = admin_pan
+	url = https://github.com/selcuk-yalcin/admin_pan.git

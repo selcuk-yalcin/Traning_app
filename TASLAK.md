@@ -66,7 +66,7 @@ flowchart LR
 
 ## admin_pan entegrasyonu
 
-- Repo kökünde alt-modül: `integrations/admin_pan` → `https://github.com/selcuk-yalcin/admin_pan.git`
+- Repo kökünde alt-modül: `admin_pan/` → `https://github.com/selcuk-yalcin/admin_pan.git`
 - Bu paket: API anahtarları, kullanıcı oturumu, proje listesi, maliyet kontrolleri admin_pan üzerinden gelir; orchestrator sadece **kimlik doğrulaması yapılmış istek** ve kota başlıkları kabul eder.
 
 ## Teknoloji tercihleri (taslak)

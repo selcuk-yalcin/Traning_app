@@ -7,7 +7,7 @@
 ## 0 — Repo ve alt-modül
 
 - [ ] GitHub’da `Traning_app` (veya seçilen isim) repo oluştur; yerel `origin` bağla.
-- [ ] `git submodule add https://github.com/selcuk-yalcin/admin_pan.git integrations/admin_pan`
+- [ ] `git submodule add https://github.com/selcuk-yalcin/admin_pan.git admin_pan` (kök dizinde; `integrations/` altında değil)
 - [ ] `.gitignore` (Python, venv, `.env`, IDE, geçici upload klasörleri).
 - [ ] Geliştirme için `.env.example` (model anahtarları yok; sadece değişken isimleri).
 
