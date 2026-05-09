@@ -10,7 +10,7 @@ Multi-model, agentic education presentation engine. Admin UI lives in [admin_pan
 - [ ] Create the `Traning_app` (or chosen name) repo on GitHub and attach local `origin`.
 - [ ] `git submodule add https://github.com/selcuk-yalcin/admin_pan.git admin_pan` (at repo root, not under `integrations/`).
 - [ ] `.gitignore` (Python, venv, `.env`, IDE, temp upload dirs).
-- [ ] `.env.example` for development (variable names only; no real secrets).
+- [x] `.env.example` for development (variable names only; copy to `.env` — see repo root).
 
 ---
 
