@@ -1,112 +1,112 @@
-# Traning_app — Kapsamlı TODO
+# Traning_app — Comprehensive TODO
 
-Çok modelli, ajanik eğitim sunumu motoru. Admin UI [admin_pan](https://github.com/selcuk-yalcin/admin_pan) alt-reposunda; bu liste yalnızca **motor + entegrasyon + export** içindir.
-
----
-
-## 0 — Repo ve alt-modül
-
-- [ ] GitHub’da `Traning_app` (veya seçilen isim) repo oluştur; yerel `origin` bağla.
-- [ ] `git submodule add https://github.com/selcuk-yalcin/admin_pan.git admin_pan` (kök dizinde; `integrations/` altında değil)
-- [ ] `.gitignore` (Python, venv, `.env`, IDE, geçici upload klasörleri).
-- [ ] Geliştirme için `.env.example` (model anahtarları yok; sadece değişken isimleri).
+Multi-model, agentic education presentation engine. Admin UI lives in [admin_pan](https://github.com/selcuk-yalcin/admin_pan); this list covers **engine + integration + export** only.
 
 ---
 
-## 1 — Sözleşmeler (şema)
+## 0 — Repository and submodule
 
-- [ ] **Deck JSON v1** şeması: sunum meta, slayt dizisi, her slayt için bloklar (başlık, gövde, tablo, görü placeholder, grafik verisi).
-- [ ] **Ajan olay şeması** (SSE/WebSocket): `stage`, `detail`, `progress`, `slide_index`, `error_code`.
-- [ ] **İstek/yanıt API** OpenAPI veya eşdeğeri: `POST /presentations/generate`, `GET /presentations/{id}/events`, `GET /presentations/{id}/deck`.
-- [ ] Model katmanı eşlemesi: `tier` → `{provider, model_id, max_tokens}` yapılandırması.
-
----
-
-## 2 — Ingest (çok modallık)
-
-- [ ] Metin prompt doğrulama ve dil tespiti (veya “Auto”).
-- [ ] PDF: metin çıkarımı (pypdf/pdfminer); gerekirse sayfa render + OCR pipeline.
-- [ ] Görü: EXIF/strip; boyut sınırı; thumbnail üretimi.
-- [ ] Görü “okuma”: VLM ile özet, nesne/sahne etiketleri, **metin için güvenli alan** (basit bounding box veya grid önerisi).
-- [ ] Birleşik bağlam belgesi: tüm kaynaklardan tek “context document” (chunk + kaynak atfı).
+- [ ] Create the `Traning_app` (or chosen name) repo on GitHub and attach local `origin`.
+- [ ] `git submodule add https://github.com/selcuk-yalcin/admin_pan.git admin_pan` (at repo root, not under `integrations/`).
+- [ ] `.gitignore` (Python, venv, `.env`, IDE, temp upload dirs).
+- [ ] `.env.example` for development (variable names only; no real secrets).
 
 ---
 
-## 3 — Orchestrator (ajan orkestrasyonu)
+## 1 — Contracts (schema)
 
-- [ ] Durum makinesi: `idle` → `planning` → `research` → `generating` → `layout` → `done` / `failed`.
-- [ ] “Thinking” alt görevleri: konuyu parçalama, anlatı yapısı, bölüm başlıkları (UI’de timeline ile uyumlu).
-- [ ] Slide sayısı politikasını uygula: “Let AI decide” / kısa / orta / uzun.
-- [ ] Research aşaması: isteğe bağlı harici arama yoksa yalnızca ingest bağlamı + LLM; varsa tooling ekle (sonraki faz).
-- [ ] Hata işleme: kısmi deck kaydı, yeniden deneme, kullanıcıya anlamlı `error_code`.
+- [ ] **Deck JSON v1** schema: presentation meta, slide array, per-slide blocks (title, body, table, image placeholder, chart data).
+- [ ] **Agent event schema** (SSE/WebSocket): `stage`, `detail`, `progress`, `slide_index`, `error_code`.
+- [ ] **Request/response API** (OpenAPI or equivalent): `POST /presentations/generate`, `GET /presentations/{id}/events`, `GET /presentations/{id}/deck`.
+- [ ] Model tier mapping: `tier` → `{provider, model_id, max_tokens}` configuration.
+
+---
+
+## 2 — Ingest (multimodal)
+
+- [ ] Text prompt validation and language detection (or “Auto”).
+- [ ] PDF: text extraction (pypdf/pdfminer); optional page render + OCR pipeline.
+- [ ] Images: strip EXIF; size limits; thumbnails.
+- [ ] Image “reading”: VLM summaries, object/scene tags, **safe regions for text** (simple bounding boxes or grid hints).
+- [ ] Unified context document: single “context document” from all sources (chunks + source attribution).
+
+---
+
+## 3 — Orchestrator (agent orchestration)
+
+- [ ] State machine: `idle` → `planning` → `research` → `generating` → `layout` → `done` / `failed`.
+- [ ] “Thinking” sub-tasks: topic decomposition, narrative structure, section titles (aligned with timeline UI).
+- [ ] Apply slide-count policy: “Let AI decide” / short / medium / long.
+- [ ] Research phase: without external search, use ingest context + LLM only; add tooling in a later phase if needed.
+- [ ] Error handling: partial deck persistence, retries, meaningful `error_code` for clients.
 
 ---
 
 ## 4 — Model router (multi-model)
 
-- [ ] Tek arayüz: `complete_text`, `complete_vision` (metin + görü URL veya base64).
-- [ ] Sağlayıcı adaptörleri: en az bir LLM + bir VLM (ör. OpenAI uyumlu API ve ikinci sağlayıcı).
-- [ ] Tier: Standard / Pro / Ultra → model ve parametre seçimi.
-- [ ] Oran sınırlama ve maliyet tahmini (admin_pan kotası ile hizalama).
+- [ ] Single interface: `complete_text`, `complete_vision` (text + image URL or base64).
+- [ ] Provider adapters: at least one LLM + one VLM (e.g. OpenAI-compatible API plus a second provider).
+- [ ] Tier: Standard / Pro / Ultra → model and parameter selection.
+- [ ] Rate limiting and cost estimation (aligned with admin_pan quotas).
 
 ---
 
-## 5 — İçerik ve slayt üretimi
+## 5 — Content and slide generation
 
-- [ ] Outline üretimi (numaralı bölümler; referans UI’daki outline ekranı).
-- [ ] Slayt başına: başlık, maddeler, tablo, karşılaştırma layout’u için yapılandırılmış çıktı.
-- [ ] Eğitim tonu: öğrenme hedefleri, kısa özet, kontrol sorusu (isteğe bağlı slayt türü).
-- [ ] “Yeni slayt prompt ile”: tek slayt için dar bağlamla yeniden üretim endpoint’i.
+- [ ] Outline generation (numbered sections; reference outline screen).
+- [ ] Per slide: title, bullets, table, structured output for comparison layouts.
+- [ ] Education tone: learning objectives, short recap, optional quiz slide type.
+- [ ] “New slide from prompt”: regeneration endpoint with narrow context for a single slide.
 
 ---
 
-## 6 — Layout ve tema
+## 6 — Layout and theme
 
-- [ ] Tema token’ları: renk, font ailesi, spacing (JSON).
-- [ ] Basit layout motoru: şablon ID → blok bölgeleri; metin taşması için kısaltma kuralları.
-- [ ] Şablon kataloğu (Education ağırlıklı) — meta + önizleme görseli yolu.
+- [ ] Theme tokens: colors, font family, spacing (JSON).
+- [ ] Simple layout engine: template ID → block regions; truncation rules for overflow.
+- [ ] Template catalog (education-heavy) — metadata + preview image path.
 
 ---
 
 ## 7 — Export PPTX
 
-- [ ] Deck JSON → **python-pptx** (veya seçilen kütüphane) ile `.pptx` üretimi.
-- [ ] Başlık gövde, tablo, madde işaretleri; görü yerleştirme ve en-boy oranı.
-- [ ] İndirme URL’si veya senkron stream; büyük dosyalar için async job.
+- [ ] Deck JSON → `.pptx` via **python-pptx** (or chosen library).
+- [ ] Title/body, tables, bullets; image placement and aspect ratio.
+- [ ] Download URL or synchronous stream; async job for large files.
 
 ---
 
-## 8 — Altyapı ve gözlemlenebilirlik
+## 8 — Infrastructure and observability
 
-- [ ] Worker kuyruğu (uzun üretim işleri).
-- [ ] Yapılandırılmış loglama (run_id, kullanıcı id’si admin_pan’dan).
-- [ ] Temel metrikler: süre, token, görü çağrısı sayısı.
-
----
-
-## 9 — admin_pan entegrasyonu
-
-- [ ] Kimlik doğrulama: paylaşılan secret veya JWT doğrulama sözleşmesi (admin_pan ile netleştir).
-- [ ] Proje/kullanıcı başına kota ve API anahtarı yönetiminin admin_pan’da kalması.
-- [ ] Bu servisin admin_pan’a **minimal** geri çağrıları: kullanım raporu, hata sayısı (isteğe bağlı).
+- [ ] Worker queue for long generation jobs.
+- [ ] Structured logging (`run_id`, user id from admin_pan).
+- [ ] Basic metrics: duration, tokens, vision call count.
 
 ---
 
-## 10 — Kalite ve güvenlik
+## 9 — admin_pan integration
 
-- [ ] Prompt injection ve zararlı dosya taraması (tip, boyut, içerik sanity).
-- [ ] PII maskeleme gerekiyorsa ingest aşamasında kural seti.
-- [ ] Birim testleri: şema validasyonu, router mock, PPTX smoke test.
-- [ ] Entegrasyon testi: örnek PDF + görü ile uçtan uca kısa deck.
-
----
-
-## 11 — İsteğe bağlı sonraki fazlar
-
-- [ ] Harici “research” araçları (web arama) ile kaynak linkleri slayta ekleme.
-- [ ] Sunum “Present” modu için statik HTML export.
-- [ ] İşbirliği (aynı deck üzerinde): operasyonel olarak admin_pan + ayrı realtime katman.
+- [ ] Authentication: shared secret or JWT contract (finalize with admin_pan).
+- [ ] Per-project/user quotas and API key management remain in admin_pan.
+- [ ] Optional **minimal** callbacks from this service to admin_pan: usage reports, error counts.
 
 ---
 
-*Dosya adı repoyla aynı kökte: `TODO.md` — tamamlanan maddeleri işaretleyerek ilerleyin.*
+## 10 — Quality and security
+
+- [ ] Prompt injection and malicious file checks (type, size, sanity).
+- [ ] Optional PII masking rules at ingest.
+- [ ] Unit tests: schema validation, router mocks, PPTX smoke test.
+- [ ] Integration test: sample PDF + image → short end-to-end deck.
+
+---
+
+## 11 — Optional later phases
+
+- [ ] External “research” tools (web search) with source links on slides.
+- [ ] Static HTML export for “Present” mode.
+- [ ] Collaboration on the same deck: operational split between admin_pan and a separate realtime layer.
+
+---
+
+*Track progress by checking items off in `TODO.md` at repo root.*
