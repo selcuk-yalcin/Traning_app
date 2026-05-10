@@ -30,6 +30,12 @@ uploads/
 tmp/
 *.tmp
 
+# Runtime storage (structure tracked via .gitkeep)
+storage/incoming/*
+!storage/incoming/.gitkeep
+storage/exports/*
+!storage/exports/.gitkeep
+
 # Logs
 *.log
 logs/

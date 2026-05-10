@@ -1,0 +1,14 @@
+{
+  "version": "1",
+  "meta": {
+    "title": "Example lesson",
+    "language": "en"
+  },
+  "slides": [
+    {
+      "id": "slide-1",
+      "layout": "title_subtitle",
+      "blocks": []
+    }
+  ]
+}
