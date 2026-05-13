@@ -10,6 +10,28 @@ This document describes the **end-to-end platform shape** (matching the referenc
 
 ---
 
+## Training templates (Deep Training UI)
+
+The **Deep Training** fullscreen experience in `admin_pan` (`/deep-training`) is the **template gallery** entry point: users pick a **starter deck** that seeds the education engine (outline, slide structure, and default module copy). Templates are **not** generic marketing layouts; the MVP set is domain-specific for compliance training.
+
+**Ownership**
+
+| Concern | Where it lives |
+|---------|----------------|
+| Template metadata (title, category, hero image, short description) | React module list on `DeepTrainingFullscreenPage` until a CMS or API exists |
+| Canonical slide schemas / Deck JSON defaults | Engine + shared JSON in `Traning_app` per [`SPEC.md`](../SPEC.md) |
+| i18n menu label **Deep Training** | `SidebarContent` + `assets/lang/*.json` |
+
+**Creating or extending a template**
+
+1. **Define learning intent** — audience, duration, mandatory topics (e.g. occupational safety vs fire protection), and assessment style (quiz vs acknowledgement).
+2. **Author Deck JSON skeleton** — fixed section order (objectives → hazards → controls → procedures → recap); keep placeholders for org-specific policies.
+3. **Wire generation prompts** — orchestrator uses template id to select system prompts and slide counts; align with model router tiers.
+4. **Add UI card** — new row in the Deep Training `MODULES` array with `category` matching an existing filter or add a filter chip when the catalog grows.
+5. **QA** — export PPTX/HTML smoke test, optional TTS segment length check, and terminology consistency in the chosen language.
+
+---
+
 ## Reference architecture (five layers)
 
 The platform is organized as **Input → AI Core → Output (TTS) → Voice (sync) → Delivery**. The legend maps concerns to layers: **LLM / presentation engine / voice synthesis / video merge / frontend**.

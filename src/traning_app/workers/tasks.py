@@ -2,4 +2,7 @@
 
 
 def run_generation_job(job_id: str) -> None:
-    raise NotImplementedError
+    """Entry point for worker / FastAPI BackgroundTasks."""
+    from traning_app.orchestrator.runner import run_job
+
+    run_job(job_id)

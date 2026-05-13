@@ -1,0 +1,101 @@
+{
+  "version": "1",
+  "meta": {
+    "title": "Fire Protection — Yangın Güvenliği Eğitimi",
+    "language": "tr",
+    "template_id": "fire-protection"
+  },
+  "slides": [
+    {
+      "type": "title",
+      "title": "Fire Protection",
+      "subtitle": "Yangın önleme · algılama · müdahale · tahliye · Infera Deep Training"
+    },
+    {
+      "type": "bullets",
+      "title": "Öğrenme hedefleri",
+      "bullets": [
+        "Yangın üçgenini (yanıcı / oksijen / tutuşturucu kaynak) işyerinde tanımak",
+        "Uygun yangın sınıfına göre söndürücü seçimi ve güvenli kullanım",
+        "Alarm, bildirim ve tahliye rollerini netleştirmek"
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Yangın bilimi ve sınıflandırma"
+    },
+    {
+      "type": "bullets",
+      "title": "Yangın sınıfları (özet)",
+      "bullets": [
+        "A — Katı yanabilirler (ör. kağıt, ahşap)",
+        "B — Yanıcı sıvılar ve gazlar",
+        "C — Enerjili ekipman yangınları",
+        "D — Yanıcı metaller · K — Yemek yağları (mutfak)"
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Önleme ve güvenli çalışma"
+    },
+    {
+      "type": "bullets",
+      "title": "Kontroller",
+      "bullets": [
+        "Kaynak işleri izinleri ve ateşleyici ortamda çalışma kuralları",
+        "Yanıcı madde depolama ve havalandırma",
+        "Elektrik dolapları, kablo düzeni ve yük kontrolü"
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Algılama ve alarm"
+    },
+    {
+      "type": "bullets",
+      "title": "Duman / ısı dedektörleri ve bildirim",
+      "bullets": [
+        "Alarmı duyunca: güvenli tahliye önceliklidir",
+        "Asansör kullanmayın; yangın merdivenlerini kullanın",
+        "Toplanma bölgesinde yoklama ve eksik kişi raporu"
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Söndürme ekipmanları"
+    },
+    {
+      "type": "two_column",
+      "title": "Söndürücü kullanımı (PASS)",
+      "left": "P — Pin çek\nA — Aim hedefle\nS — Squeeze tetik\nS — Sweep salla",
+      "right": "Yanlış sınıf → yangını büyütebilir\nÖrn: su ile B/C yangını yok"
+    },
+    {
+      "type": "bullets",
+      "title": "Kontrol listesi",
+      "bullets": [
+        "Basınç göstergesi ve mühür / tarih kontrolü",
+        "Erişim yolu önünde engel olmaması",
+        "Yıllık bakım ve eğitim kayıtları"
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Tahliye ve tatbikat"
+    },
+    {
+      "type": "bullets",
+      "title": "Plan ve tatbikat",
+      "bullets": [
+        "Alternatif çıkış haritaları ve işaretlemeler",
+        "Engelli ve ziyaretçi prosedürleri",
+        "Yıllık tahliye tatbikatı ve iyileştirme aksiyonları"
+      ]
+    },
+    {
+      "type": "title",
+      "title": "Özet",
+      "subtitle": "Kısa sınav · yangın ekipmanı turu · rol netleştirme toplantısı"
+    }
+  ]
+}

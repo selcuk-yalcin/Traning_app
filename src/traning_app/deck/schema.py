@@ -6,6 +6,7 @@ from pydantic import BaseModel
 class DeckMeta(BaseModel):
     title: str
     language: str | None = None
+    template_id: str | None = None
 
 
 class Deck(BaseModel):

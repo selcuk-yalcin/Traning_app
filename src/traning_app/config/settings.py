@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     openai_api_key: str | None = None
     anthropic_api_key: str | None = None
     openrouter_api_key: str | None = None
+    openai_base_url: str = "https://api.openai.com/v1"
+    llm_model_standard: str | None = None
+    llm_model_pro: str | None = None
+    llm_model_ultra: str | None = None
 
     mongodb_uri: str | None = None
     mongodb_db: str = "presentation_engine"
