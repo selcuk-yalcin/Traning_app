@@ -1,0 +1,20 @@
+{
+  "version": "1",
+  "meta": {
+    "title": "İş Güvenliği — Şablon",
+    "language": "tr",
+    "template_id": "occ-safety"
+  },
+  "slides": [
+    {
+      "type": "title",
+      "title": "İş Güvenliği Eğitimi",
+      "subtitle": "Başlangıç şablonu"
+    },
+    {
+      "type": "bullets",
+      "title": "Hedefler",
+      "bullets": ["KKD kullanımı", "Risk farkındalığı", "Güvenli davranış"]
+    }
+  ]
+}

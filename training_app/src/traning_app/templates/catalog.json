@@ -1,0 +1,18 @@
+{
+  "occ-safety": {
+    "title": "İş Güvenliği",
+    "audience": "Çalışanlar",
+    "duration_minutes": 45,
+    "assessment_style": "acknowledgement",
+    "mandatory_topics": ["KKD", "risk değerlendirme", "olay bildirimi"],
+    "system_prompt_addendum": "İş güvenliği ve KKD odaklı eğitim slaytları üret."
+  },
+  "fire-protection": {
+    "title": "Fire Protection",
+    "audience": "Facility staff",
+    "duration_minutes": 40,
+    "assessment_style": "acknowledgement",
+    "mandatory_topics": ["yangın önleme", "alarm", "tahliye"],
+    "system_prompt_addendum": "Yangın güvenliği ve tahliye vurgulu eğitim slaytları üret."
+  }
+}

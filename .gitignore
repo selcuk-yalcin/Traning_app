@@ -10,6 +10,12 @@ dist/
 build/
 *.egg-info/
 
+# Training app (nested project)
+training_app/.venv/
+training_app/**/__pycache__/
+training_app/**/.pytest_cache/
+training_app/**/*.egg-info/
+
 # Environment
 .env
 .env.local
@@ -31,10 +37,10 @@ tmp/
 *.tmp
 
 # Runtime storage (structure tracked via .gitkeep)
-storage/incoming/*
-!storage/incoming/.gitkeep
-storage/exports/*
-!storage/exports/.gitkeep
+training_app/storage/incoming/*
+!training_app/storage/incoming/.gitkeep
+training_app/storage/exports/*
+!training_app/storage/exports/.gitkeep
 
 # Logs
 *.log

@@ -1,0 +1,20 @@
+{
+  "version": "1",
+  "meta": {
+    "title": "Fire Protection — Template",
+    "language": "tr",
+    "template_id": "fire-protection"
+  },
+  "slides": [
+    {
+      "type": "title",
+      "title": "Fire Protection Training",
+      "subtitle": "Starter template"
+    },
+    {
+      "type": "bullets",
+      "title": "Objectives",
+      "bullets": ["Prevention", "Detection & alarm", "Evacuation"]
+    }
+  ]
+}
