@@ -27,16 +27,18 @@ This document describes the **end-to-end platform shape** (matching the referenc
 | L5 tam slide editör + paylaşım | ✅ Tamamlandı | `CreateProjectPage` canvas, tema/ses/paylaş panelleri, Sunum, `PUT /deck`, `embed/html`, slayt görseli API |
 | **L5+ Slayt player** — kayan yazı, animasyon, accordion, geçişler, element-senkron ses, ilerleme, quiz, mobil | ⏳ Planlandı | [§ Slayt deneyimi](#slayt-player-l5) + Deck JSON / `html_export` / embed |
 | **HTML slayt fabrikası** — slides.com / RCA tarzı şablonlar, tek HTML, layout motoru | ⏳ Planlandı | [§ HTML slayt fabrikası](#html-slide-factory) — `html_export`, `layout_id` |
+| **Firebase Hosting + QR izleme** | ⏳ Planlandı | [§ Firebase Hosting & QR](#firebase-hosting-qr) — `roadmap.md` [Phase G](./roadmap.md#phase-g-firebase-qr) |
 | admin_pan auth / kota sözleşmesi | ⏳ Beklemede | `roadmap.md` Phase E |
 | CI güvenlik + entegrasyon matrisi | ⏳ Beklemede | `roadmap.md` Phase D |
 
 ### Sıradaki işler (öncelik)
 
-1. **HTML slayt fabrikası** — Şablon kataloğu (Desk/RCA), `html_export` genişletmesi, player kabuğu; bkz. [HTML slayt fabrikası](#html-slide-factory).
-2. **Slayt deneyimi (L5+)** — Kayan yazılar, fade-in, accordion, geçişler, element bazlı ses, ilerleme, quiz, mobil; bkz. [§ Slayt deneyimi](#slayt-player-l5).
-3. **Remix** — Tek slaytı LLM ile yeniden üretme (motor endpoint).
-4. **S3** — Export artefact’larını kalıcı URL’ye yazma.
-5. **Pitch** — OpenAI/ElevenLabs gerçek pitch parametresi (şu an yalnızca tarayıcı `playbackRate`).
+1. **Firebase Hosting + QR izleme** — Statik player deploy, `trackSlide()`, QR URL (`kullanici`, `firma`); bkz. [§ Firebase Hosting & QR](#firebase-hosting-qr).
+2. **HTML slayt fabrikası** — Şablon kataloğu (Desk/RCA), `html_export` genişletmesi, player kabuğu; bkz. [HTML slayt fabrikası](#html-slide-factory).
+3. **Slayt deneyimi (L5+)** — Kayan yazılar, fade-in, accordion, geçişler, element bazlı ses, ilerleme, quiz, mobil; bkz. [§ Slayt deneyimi](#slayt-player-l5).
+4. **Remix** — Tek slaytı LLM ile yeniden üretme (motor endpoint).
+5. **S3** — Export artefact’larını kalıcı URL’ye yazma.
+6. **Pitch** — OpenAI/ElevenLabs gerçek pitch parametresi (şu an yalnızca tarayıcı `playbackRate`).
 
 ---
 
@@ -269,7 +271,154 @@ Configuration aligns with root **`.env.example`**: `ELEVENLABS_API_KEY`, OpenAI 
 | **Voice UI** | Ses paneli: slayt TTS önizleme + tarayıcı `playbackRate` (pitch API henüz yok). |
 | **Export + paylaşım** | PPTX, HTML, MP4; `GET /embed/html` ve iframe snippet; `PUT /deck` ile kalıcı düzenleme. |
 | **Slayt görseli** | `GET /slides/{i}/image` ile önizleme. |
-| **Sonraki** | Remix, S3, PPTX’e gömülü ses; [etkileşimli player](#slayt-player-l5); [HTML şablon fabrikası](#html-slide-factory). |
+| **Sonraki** | Remix, S3, PPTX’e gömülü ses; [etkileşimli player](#slayt-player-l5); [HTML şablon fabrikası](#html-slide-factory); [Firebase + QR izleme](#firebase-hosting-qr). |
+
+---
+
+<a id="firebase-hosting-qr"></a>
+
+## Firebase Hosting — QR ile sunum izletme ve slayt takibi
+
+**Amaç:** Üretilen eğitim sunumlarını **QR kod** ile sahaya dağıtmak; izleyicide **kim** (`kullanici`) ve **hangi kurum** (`firma`) bilgisini URL’den almak; **hangi slaytın** ne kadar görüntülendiğini kaydetmek. Dağıtım kanalı: **Firebase Hosting** (statik HTML player); izleme: Firebase Analytics ve/veya Firestore.
+
+**Roadmap görevleri:** [`roadmap.md` — Phase G](./roadmap.md#phase-g-firebase-qr).
+
+### Kurulum (operasyon)
+
+| Adım | Komut / eylem |
+|------|----------------|
+| Proje | [console.firebase.google.com](https://console.firebase.google.com) → yeni proje; **Hosting** ve **Analytics** (veya Firestore) etkin |
+| Node.js | [nodejs.org](https://nodejs.org) — LTS kurulum |
+| CLI | `npm install -g firebase-tools` |
+| Oturum | `firebase login` |
+| Klasör | Export HTML’i `hosting/public/` içine koy; giriş dosyası **`index.html`** |
+| Init | `firebase init hosting` — public dizin, tek sayfa uygulaması ise `rewrite ** → /index.html` |
+| Yayın | `firebase deploy` → `https://<proje-id>.web.app` (veya özel domain) |
+
+Repo önerisi: `training_app/hosting/` veya `admin_pan/Admin/public/player/` — `.firebaserc` + `firebase.json` kökte veya alt klasörde; **gizli anahtarlar commit edilmez** (yalnızca public `firebaseConfig`).
+
+### QR URL sözleşmesi
+
+İzleyiciye verilen link örneği:
+
+```text
+https://<proje-id>.web.app/view/index.html?deck=<job_id>&kullanici=ahmet.yilmaz&firma=acme-ltd
+```
+
+| Parametre | Zorunlu | Açıklama |
+|-----------|---------|----------|
+| `deck` | Evet (MVP) | Motor `job_id` veya kalıcı `deck_id`; player deck JSON’u API’den veya gömülü manifest’ten yükler |
+| `kullanici` | Önerilir | İzleyici adı / sicil / e-posta öneki (URL-encode) |
+| `firma` | Önerilir | Kurum / şube kodu |
+| `slide` | Hayır | Başlangıç slayt indeksi (0 tabanlı) |
+| `lang` | Hayır | `tr`, `en`, … |
+
+**admin_pan:** Create project **Paylaş** panelinde “QR ile dağıt” → yukarıdaki URL’yi üret + QR görseli (canvas veya kütüphane); parametreler formdan veya oturumdan doldurulur.
+
+### Firebase config (player HTML)
+
+Sayfa `<head>` veya modül girişinde (örnek iskelet):
+
+```html
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+  import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "…",
+    authDomain: "….firebaseapp.com",
+    projectId: "…",
+    storageBucket: "….appspot.com",
+    messagingSenderId: "…",
+    appId: "…",
+    measurementId: "G-…"
+  };
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+
+  const params = new URLSearchParams(location.search);
+  const context = {
+    deck: params.get("deck"),
+    kullanici: params.get("kullanici") || "anonim",
+    firma: params.get("firma") || "bilinmiyor",
+  };
+
+  window.trackSlide = function (slideIndex, extra = {}) {
+    logEvent(analytics, "slide_view", {
+      slide_index: slideIndex,
+      deck_id: context.deck,
+      kullanici: context.kullanici,
+      firma: context.firma,
+      ...extra,
+    });
+  };
+
+  // İlk slayt
+  trackSlide(0, { event: "session_start" });
+</script>
+```
+
+**Firestore alternatifi:** Yüksek hacim veya özel raporlar için `slide_views` koleksiyonuna `{ deck, kullanici, firma, slide_index, ts }` yazılır; Analytics yalnızca özet dashboard için yeterli olabilir.
+
+### `trackSlide()` — player davranışı
+
+Her slayt **görünür** olduğunda (ileri/geri, swipe, klavye):
+
+1. `trackSlide(currentIndex, { duration_sec?, completed?: boolean })` çağrılır.
+2. Aynı slaytta tekrarlayan çağrılar debounce edilir (ör. 2 sn içinde bir kez).
+3. Oturum kapanışında (sekme kapatma / `visibilitychange`) son slayt + `session_end` event’i.
+
+Uygulama yeri: `html_export.py` çıktısına enjekte edilen JS; veya `admin_pan` embed player bileşeni; L5+ [Slayt deneyimi](#slayt-player-l5) ile ortak `timeline` API’si ileride birleştirilebilir.
+
+### Mimari (Traning_app ↔ Firebase ↔ admin_pan)
+
+```mermaid
+flowchart LR
+  subgraph motor [training_app]
+    GEN[POST /generate]
+    EMB[GET /embed/html]
+    BND[export/hosting-bundle - planlı]
+  end
+  subgraph host [Firebase Hosting]
+    IDX[index.html player]
+    CFG[firebaseConfig + trackSlide]
+  end
+  subgraph admin [admin_pan]
+    QR[Paylaş: QR + URL builder]
+  end
+  GEN --> EMB
+  EMB --> IDX
+  BND --> IDX
+  QR -->|"?kullanici&firma&deck"| IDX
+  IDX --> CFG
+  CFG --> ANA[Firebase Analytics / Firestore]
+```
+
+| Parça | Sahiplik |
+|-------|----------|
+| Deck üretimi, `embed/html` | `training_app` — `agents/html_export.py` |
+| Hosting deploy, `firebase.json` | Ops / repo `hosting/` |
+| QR + parametre formu | `admin_pan` — Create project Paylaş |
+| Slayt event şeması | Bu plan + Firebase konsol event adları |
+
+### İzleme (raporlama)
+
+- **Firebase Console → Analytics → Events:** `slide_view`, `session_start`, `session_end`; boyutlar: `kullanici`, `firma`, `deck_id`, `slide_index`.
+- **BigQuery export** (isteğe bağlı): kurumsal raporlama.
+- **Motor API (Phase G+):** `GET /presentations/{id}/analytics` — Firebase Admin SDK ile özet; veya yalnızca Firebase UI (MVP).
+
+### Güvenlik ve gizlilik
+
+- QR linklerinde **PII** (`kullanici` tam e-posta) mümkünse hash veya opak token (`?token=…`) ile değiştirilir.
+- `firebaseConfig` public’tir; güvenlik **Firestore rules** ve **API anahtarı kısıtları** (HTTP referrer) ile sağlanır.
+- Deck içeriği herkese açık hosting’de ise yalnızca **paylaşım amaçlı** sunumlar deploy edilir; hassas içerik için auth’lu route veya süreli signed URL planlanır ([Phase E](./roadmap.md) auth).
+
+### Uygulama sırası (önerilen)
+
+1. Manuel: tek `index.html` + `firebase deploy` doğrulaması.  
+2. Motor: `embed/html` çıktısına `trackSlide` + URL param okuma snippet’i.  
+3. admin_pan: Paylaş → QR + parametreli URL.  
+4. Otomasyon: `hosting-bundle` export + CI `firebase deploy --only hosting`.
 
 ---
 
@@ -286,7 +435,7 @@ Eğitim sunumlarının **yayınlanan** ve **gömülen** sürümlerinde (`embed/h
 | **Tıklanınca açılan metin / accordion** | Ek açıklama, yasal metin, “daha fazla oku” | Blok tipi `accordion` / `disclosure`: `summary`, `body`, `defaultExpanded`; native `<details>` veya ARIA accordion |
 | **Slayt geçiş efektleri** | Slide → slide geçişi | Player config: `transition: fade|slide|zoom|none`; Reveal.js `transition` veya özel view transitions API (desteklenen tarayıcılarda) |
 | **Ses anlatı senkronizasyonu (element bazlı)** | Her başlık / madde / kutunun zaman damgasına göre vurgulanması veya sırayla gösterilmesi | `audio_manifest` veya slayt içi `timeline[]`: `{ element_id, start_sec, end_sec }`; `AudioContext` + `requestAnimationFrame` veya WebVTT benzeri cue listesi; TTS üretiminde cue üretimi için motor tarafı genişletme |
-| **İlerleme takibi** | Kullanıcının hangi slayta kadar izlediği | `localStorage` / `sessionStorage` (anonim) veya oturum açıksa `POST /progress` (admin_pan); `deck_id`, `last_slide_index`, `completed_at` |
+| **İlerleme takibi** | Kullanıcının hangi slayta kadar izlediği | `localStorage` / `sessionStorage` (anonim) veya oturum açıksa `POST /progress` (admin_pan); `deck_id`, `last_slide_index`, `completed_at`; QR dağıtımda [Firebase `trackSlide()`](#firebase-hosting-qr) |
 | **Quiz / soru** | Slayta gömülü tek doğru / çoktan seçmeli, doğrulama | Deck’te `type: "quiz"`: `question`, `options[]`, `correct_index` veya `acceptable_answers[]`; player’da cevap sonrası geri bildirim; raporlama isteğe bağlı API |
 | **Mobil uyum** | Dokunmatik, küçük ekran, yatay/dikey | Viewport meta, `touch-action`, alt navigasyon, font/ölçek tokenları; 16:9 korunurken `min-height` ve kaydırılabilir içerik |
 

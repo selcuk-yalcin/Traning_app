@@ -98,6 +98,8 @@ Bu bölüm, [`plan.md`](./plan.md) içindeki **L5 / teslim** ve **L1 ingest** il
 
 **İleri:** Remix, S3, PPTX’e gömülü ses; [`plan.md` § HTML slayt fabrikası](./plan.md#html-slide-factory).
 
+**QR ile izleme:** Firebase Hosting + slayt analytics — [`plan.md` § Firebase Hosting & QR](./plan.md#firebase-hosting-qr), aşağı [Phase G](#phase-g-firebase-qr).
+
 ---
 
 ## Layer completion (motor)
@@ -111,6 +113,7 @@ Bu bölüm, [`plan.md`](./plan.md) içindeki **L5 / teslim** ve **L1 ingest** il
 | **L4** | Per-slide TTS files, FFmpeg MP4 mux, `export/mp4` | Done (MVP) |
 | **L5** | Full slide editor, presenter, theme/voice/share panels, `PUT` deck, embed HTML | Done (`admin_pan` `/create-project` editor + API) |
 | **L5+** | Interactive slide player: ticker, animations, accordion, transitions, per-element audio sync, progress, quiz, mobile | Planned — [`plan.md` § Slayt deneyimi](./plan.md#slayt-player-l5) |
+| **QR / izleme** | Firebase Hosting’de statik player, `trackSlide()`, QR URL parametreleri (`kullanici`, `firma`) | Planned — [`plan.md` § Firebase Hosting & QR](./plan.md#firebase-hosting-qr) |
 
 ---
 
@@ -155,6 +158,45 @@ Ayrıntılar: [`plan.md` — Slayt deneyimi](./plan.md#slayt-player-l5).
 - [ ] Quiz slayt tipi ve doğrulama UI.
 - [ ] Mobil uyum (dokunma, düzen, tipografi).
 - [ ] **HTML slayt fabrikası:** `layout_id` kataloğu (Desk/RCA), `html_export` genişletmesi — [`plan.md` § HTML slayt fabrikası](./plan.md#html-slide-factory).
+
+<a id="phase-g-firebase-qr"></a>
+
+## Phase G — Firebase Hosting & QR ile sunum izleme
+
+Ayrıntılar: [`plan.md` — Firebase Hosting & QR](./plan.md#firebase-hosting-qr).
+
+**Amaç:** Eğitim sunumlarını **QR kod** ile dağıtmak; izleyici kimliği ve kurum bilgisini URL’den almak; **slayt bazında** ne kadar izlendiğini kaydetmek.
+
+### Kurulum (tek seferlik)
+
+- [ ] [Firebase Console](https://console.firebase.google.com) → proje oluştur (Hosting + Analytics açık).
+- [ ] [Node.js](https://nodejs.org) kurulu.
+- [ ] `npm install -g firebase-tools`
+- [ ] `firebase login`
+
+### Hosting projesi
+
+- [ ] Statik player klasörü: export edilen HTML veya `hosting/public/index.html` (motor `embed/html` çıktısı veya özelleştirilmiş viewer).
+- [ ] `firebase init hosting` (public klasör, SPA rewrite gerekirse).
+- [ ] `firebase deploy` → canlı URL (`https://<proje>.web.app/...`).
+
+### Player & izleme kodu
+
+- [ ] Firebase **config** snippet’i player HTML’e (`firebaseConfig` + SDK).
+- [ ] Her slayt geçişinde **`trackSlide(slideIndex, meta)`** — Analytics event veya Firestore/RTDB dokümanı.
+- [ ] URL parametreleri: `?kullanici=<ad>&firma=<xyz>&deck=<job_id>` (ve isteğe bağlı `lang`, `slide`).
+- [ ] QR üretimi: `admin_pan` **Paylaş** panelinde tam URL + QR görseli (mevcut embed URL’ye parametre ekleme).
+
+### Motor / API (isteğe bağlı, Phase G+)
+
+- [ ] `GET /presentations/{id}/export/hosting-bundle` — tek zip: `index.html` + inline deck JSON veya manifest.
+- [ ] Sunucu tarafı özet API (`GET /presentations/{id}/analytics`) — Firebase’den okuma veya motor DB; MVP’de yalnızca Firebase yeterli.
+
+### Doğrulama
+
+- [ ] QR tara → player açılır, `kullanici` / `firma` konsol veya Analytics’te görünür.
+- [ ] Slayt ilerlet → her slayt için en az bir `slide_view` (veya eşdeğer) kaydı.
+- [ ] Mobil tarayıcıda tam ekran / dokunma ile geçiş.
 
 ---
 
